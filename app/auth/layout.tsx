@@ -1,5 +1,10 @@
+import { ToastContainer } from "react-toastify";
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div>{children}</div>
+        <>
+            <div>{children}</div>
+            <ToastContainer />
+        </>
     )
 }
