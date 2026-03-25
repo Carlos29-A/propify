@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link"
 
 export const TopMenu = () => {
@@ -11,7 +10,7 @@ export const TopMenu = () => {
                     <Link href="/">
                         { /* Logo */}
                         <div className="flex  gap-2">
-                            <Image src="/logo.png" alt="Logo" width={30} height={30} />
+                            <img src="/file.svg" alt="Logo" width={30} height={30} />
                             <span className="text-2xl font-black tracking-tight text-blue-700">Propify</span>
                         </div>
 

@@ -1,9 +1,10 @@
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { propertyTable } from "./property";
 
 export const propertyImageTable = pgTable("property_image", {
     id: uuid("id").primaryKey(),
-    url: varchar("url", { length: 255 }).notNull(),
+    // URLs de Cloudinary suelen superar 255 caracteres con transformaciones.
+    url: text("url").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 

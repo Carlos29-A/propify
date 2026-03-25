@@ -1,5 +1,6 @@
 import { Sidebar, TopMenu } from "@/src/features/dashboard/components";
 import { Footer } from "@/src/shared/ui";
+import { ToastContainer } from "react-toastify";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 
@@ -37,6 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
 
             </div>
+            <ToastContainer />
         </>
     )
 }

@@ -4,34 +4,56 @@ import { useForm } from "react-hook-form";
 import { PropertyFormData, PropertyType } from "../../types/properie.type";
 import { useState } from "react";
 import { GiPhotoCamera } from "react-icons/gi";
+import { createUpdateProperty } from "../../actions/create-update-property";
+import { toast } from "react-toastify";
 
 
 
 export const ProductForm = ({ propertyTypes }: { propertyTypes: PropertyType[] }) => {
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<PropertyFormData>({})
+    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<PropertyFormData>({
+        defaultValues: {
+            rooms: 1,
+            bathrooms: 1,
+        },
+    })
 
     const [rooms, setRooms] = useState(1);
     const [bathrooms, setBathrooms] = useState(1);
 
     const handleChangeRooms = (value: number) => {
-        if (value < 1) {
-            setRooms(1);
-        } else {
-            setRooms(value);
-        }
+        const next = value < 1 ? 1 : value;
+        setRooms(next);
+        // Si solo actualizas el estado, RHF puede mantener el valor viejo.
+        // Sincroniza para que al enviar salga el número correcto.
+        setValue("rooms", next, { shouldValidate: true, shouldDirty: true });
     }
     const handleChangeBathrooms = (value: number) => {
-        if (value < 1) {
-            setBathrooms(1);
-        } else {
-            setBathrooms(value);
-        }
+        const next = value < 1 ? 1 : value;
+        setBathrooms(next);
+        setValue("bathrooms", next, { shouldValidate: true, shouldDirty: true });
     }
+    watch("bathrooms")
+    watch("rooms")
 
-    const onSubmit = (data: PropertyFormData) => {
-        console.log(data);
-    }
+    const onSubmit = async (data: PropertyFormData) => {
+        const { images, ...productToSave } = data;
+        const imageFiles =
+            images && images.length > 0 ? Array.from(images) : undefined;
+
+        const { success, message, property } = await createUpdateProperty(
+            productToSave,
+            imageFiles,
+        );
+
+        if (success) {
+            toast.success(message);
+            reset();
+        } else {
+            toast.error(message);
+        }
+
+    };
 
     return (
         <>
@@ -164,13 +186,14 @@ export const ProductForm = ({ propertyTypes }: { propertyTypes: PropertyType[] }
                     </div>
                     <input type="file" multiple={true}
                         className="border-2 border-dashed border-surface-variant rounded-xl p-10 flex flex-col items-center justify-center bg-surface-container-low group hover:bg-surface-container transition-colors cursor-pointer"
-                        {...register("images", { required: "Las imágenes son requeridas" })}
+                        {...register("images")}
                     />
                     {errors.images && <p className="text-red-500 text-xs">{errors.images.message}</p>}
                 </section>
                 <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
                     <button
-                        className="w-full sm:flex-1 py-4 px-8 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold cursor-pointer  shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+                        className="w-full sm:flex-1 py-4 px-8 bg-linear-to-r from-primary to-primary-container text-on-primary font-bold cursor-pointer  shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        type="submit">
                         Publicar Propiedad
                         <span className="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
                     </button>

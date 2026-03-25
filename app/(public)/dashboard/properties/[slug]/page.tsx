@@ -8,7 +8,7 @@ export default async function CreatePropertyPage() {
 
     return (
         <>
-            <ProductForm propertyTypes={propertyTypes} />
+            <ProductForm propertyTypes={propertyTypes ?? []} />
         </>
     )
 }

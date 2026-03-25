@@ -1,0 +1,120 @@
+import db from "@/src";
+import { Property, PropertyFormData } from "../types/properie.type";
+import { eq } from "drizzle-orm";
+import { propertyImageTable, propertyTable } from "@/src/db/schema";
+import { randomUUID } from "crypto";
+import { v2 as cloudinary } from "cloudinary";
+import { revalidatePath } from "next/cache";
+
+cloudinary.config(process.env.CLOUDINARY_URL!);
+
+export class PropertyService {
+    static async createProperty(property: PropertyFormData, userId: string, images: File[]) {
+        const { id, ...rest } = property;
+
+        try {
+            const result = await db.transaction(async (tx) => {
+
+                let property: Property;
+
+                if (id) {
+                    // Actualizar la propiedad
+                    const [updatedProperty] = await tx
+                        .update(propertyTable)
+                        .set({
+                            title: rest.title,
+                            description: rest.description,
+                            price: rest.price.toString(),
+                            location: rest.location,
+                            rooms: rest.rooms,
+                            bathrooms: rest.bathrooms,
+                            area: rest.area.toString(),
+                            typeId: rest.typeId,
+                            userId,
+                        })
+                        .where(eq(propertyTable.id, id))
+                        .returning();
+                    if (!updatedProperty) {
+                        throw new Error("No se encontró la propiedad para actualizar");
+                    }
+                    property = updatedProperty;
+                } else {
+                    // Crear la propiedad
+                    const [createdProperty] = await tx.insert(propertyTable).values({
+                        id: randomUUID().toString(),
+                        title: rest.title,
+                        description: rest.description,
+                        price: rest.price.toString(),
+                        location: rest.location,
+                        rooms: rest.rooms,
+                        bathrooms: rest.bathrooms,
+                        area: rest.area.toString(),
+                        typeId: rest.typeId,
+                        userId,
+                    }).returning();
+                    if (!createdProperty) {
+                        throw new Error("No se pudo crear la propiedad");
+                    }
+                    property = createdProperty;
+                }
+
+                if (images.length > 0) {
+                    const uploadedImages = await PropertyService.uploadImages(images);
+
+                    if (!uploadedImages) {
+                        throw new Error("Error al subir las imágenes");
+                    }
+                    await tx.insert(propertyImageTable).values(uploadedImages.map((image) => ({
+                        id: randomUUID().toString(),
+                        url: image,
+                        propertyId: property.id,
+                    })))
+
+                }
+
+
+                return {
+                    property,
+                };
+            });
+
+
+            revalidatePath(`/dashboard/properties`);
+            revalidatePath(`/properties/${result.property.id}`);
+
+            return result.property;
+
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : String(error);
+            console.error("[PropertyService.createProperty]", msg);
+            throw new Error(msg);
+        }
+    }
+    static async uploadImages(images: File[]) {
+        try {
+
+            const uploadPromises = images.map(async (image) => {
+                try {
+
+                    const buffer = await image.arrayBuffer();
+                    const base64Image = Buffer.from(buffer).toString("base64");
+
+
+                    return cloudinary.uploader.upload(`data:image/jpeg;base64,${base64Image}`)
+                        .then((result) => result.secure_url)
+
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error al subir la imagen");
+                }
+            })
+            const uploadedImages = await Promise.all(uploadPromises);
+
+            return uploadedImages;
+
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error al subir las imágenes");
+        }
+    }
+}
