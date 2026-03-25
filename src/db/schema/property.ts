@@ -17,6 +17,6 @@ export const propertyTable = pgTable("property", {
     // Relaciones con la tabla de tipos de propiedades
     typeId: serial("type_id").references(() => propertyTypeTable.id),
     // Relaciones con la tabla de usuarios
-    userId: serial("user_id").references(() => usersTable.id),
+    userId: text("user_id").notNull().references(() => usersTable.id),
 
 });

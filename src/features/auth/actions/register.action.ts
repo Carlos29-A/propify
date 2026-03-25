@@ -1,8 +1,9 @@
 "use server";
 
 import { authSchema } from "../schemas/auth.schema";
-import { createUser } from "../services/createUser";
 import { RegisterUserInput } from "../types/create-user";
+import { auth } from "@/src/lib/auth";
+import { isAPIError } from "better-auth/api";
 
 // Reciben los datos del formulario
 export const registerAction = async (formData: RegisterUserInput) => {
@@ -25,20 +26,25 @@ export const registerAction = async (formData: RegisterUserInput) => {
     }
 
     try {
-        const user = await createUser({
-            name: parsedData.data.name,
-            email: parsedData.data.email,
-            password: parsedData.data.password,
+        // Delegamos el alta completa a better-auth:
+        // 1) crea el usuario (user table)
+        // 2) crea la cuenta de credenciales (account table) con el hash
+        const result = await auth.api.signUpEmail({
+            body: {
+                name: parsedData.data.name,
+                email: parsedData.data.email,
+                password: parsedData.data.password,
+            },
         });
 
         return {
             success: true,
             message: "Usuario creado correctamente",
-            user,
+            user: result.user,
         };
     } catch (e) {
         const message =
-            e instanceof Error ? e.message : "No se pudo crear el usuario";
+            isAPIError(e) ? e.message : e instanceof Error ? e.message : "No se pudo crear el usuario";
         return {
             success: false,
             errors: [message],

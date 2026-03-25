@@ -12,7 +12,7 @@ export const loginAction = async (formData: LoginUserInput) => {
     }
 
     // Validar con zod
-    const parsedData = loginSchema.safeParse(data);
+    const parsedData = await loginSchema.safeParse(data);
 
     if (!parsedData.success) {
         const errors = [
@@ -23,7 +23,6 @@ export const loginAction = async (formData: LoginUserInput) => {
             errors,
         };
     }
-
     try {
 
         //Login con better-auth

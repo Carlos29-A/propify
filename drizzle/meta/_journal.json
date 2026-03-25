@@ -8,6 +8,20 @@
       "when": 1774384842590,
       "tag": "0000_strong_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1774448063587,
+      "tag": "0001_mature_shriek",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774449404835,
+      "tag": "0002_lean_silver_fox",
+      "breakpoints": true
     }
   ]
 }
