@@ -1,7 +1,30 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { LoginUserInput } from "../types/login-user";
+import { loginAction } from "../actions/login.action";
+import { toast } from "react-toastify";
+
+
 export const LoginForm = () => {
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginUserInput>({})
+
+    const onSubmit = async (data: LoginUserInput) => {
+        const result = await loginAction(data);
+
+        if (result.success) {
+            toast.success(result.message);
+        } else {
+            result.errors?.forEach((msg) => toast.error(msg));
+        }
+        reset();
+    }
+
+
     return (
         <>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-1.5">
                     <label
                         className="ml-1 text-[10px] font-bold tracking-wider text-on-surface-variant uppercase"
@@ -16,7 +39,9 @@ export const LoginForm = () => {
                         className="w-full rounded-xl border-none bg-surface-container-high py-3.5 pr-4 pl-5 text-on-surface transition-all placeholder:text-outline focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none"
                         placeholder="name@example.com"
                         type="email"
+                        {...register("email", { required: "El correo electrónico es requerido" })}
                     />
+                    {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
 
                 </div>
 
@@ -34,7 +59,9 @@ export const LoginForm = () => {
                             className="w-full rounded-xl border-none bg-surface-container-high py-3.5 pr-12 pl-4 text-on-surface transition-all placeholder:text-outline focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none"
                             placeholder="••••••••"
                             type="password"
+                            {...register("password", { required: "La contraseña es requerida" })}
                         />
+                        {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
                         <button
                             type="button"
                             className="absolute top-1/2 right-4 -translate-y-1/2 text-outline hover:text-on-surface"

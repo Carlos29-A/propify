@@ -10,3 +10,9 @@ export const authSchema = z.object({
     message: "Las contraseñas no coinciden",
     path: ["confirmPassword"],
 });
+
+
+export const loginSchema = z.object({
+    email: z.string().email("El correo electrónico no es válido"),
+    password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+});
