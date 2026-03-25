@@ -4,10 +4,16 @@ import { useForm } from "react-hook-form";
 import { RegisterUserInput } from "../types/create-user";
 import { registerAction } from "../actions";
 import { toast } from "react-toastify";
+import { useState } from "react";
+import { PasswordInput } from "@/src/shared/ui";
 
 
 export const RegisterForm = () => {
 
+
+    // Ver la contraseña del usuario
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<RegisterUserInput>({})
 
@@ -91,19 +97,14 @@ export const RegisterForm = () => {
                             autoComplete="new-password"
                             className="w-full rounded-xl border-none bg-surface-container-high py-3.5 pr-12 pl-12 text-on-surface transition-all placeholder:text-outline focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none"
                             placeholder="••••••••"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             {...register("password", { required: "La contraseña es requerida" })}
                         />
                         {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
-                        <button
-                            type="button"
-                            className="absolute top-1/2 right-4 -translate-y-1/2 text-outline hover:text-on-surface"
-                            aria-label="Mostrar contraseña"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                visibility
-                            </span>
-                        </button>
+                        <PasswordInput
+                            showPassword={showPassword}
+                            setShowPassword={setShowPassword}
+                        />
                     </div>
                 </div>
 
@@ -127,6 +128,10 @@ export const RegisterForm = () => {
                             {...register("confirmPassword", { required: "La contraseña es requerida" })}
                         />
                         {errors.confirmPassword && <p className="text-red-500 text-xs">{errors.confirmPassword.message}</p>}
+                        <PasswordInput
+                            showPassword={showConfirmPassword}
+                            setShowPassword={setShowConfirmPassword}
+                        />
                     </div>
                 </div>
 

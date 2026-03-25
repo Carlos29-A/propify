@@ -4,23 +4,29 @@ import { useForm } from "react-hook-form";
 import { LoginUserInput } from "../types/login-user";
 import { loginAction } from "../actions/login.action";
 import { toast } from "react-toastify";
+import { PasswordInput } from "@/src/shared/ui";
+import { useState } from "react";
+import { redirect } from "next/navigation";
 
 
 export const LoginForm = () => {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<LoginUserInput>({})
 
+    // Ver la contraseña del usuario
+    const [showPassword, setShowPassword] = useState(false);
     const onSubmit = async (data: LoginUserInput) => {
         const result = await loginAction(data);
 
         if (result.success) {
             toast.success(result.message);
+            // Redirigir a su panel de propiedades
+            redirect("/dashboard")
         } else {
             result.errors?.forEach((msg) => toast.error(msg));
         }
         reset();
     }
-
 
     return (
         <>
@@ -58,19 +64,14 @@ export const LoginForm = () => {
                             autoComplete="new-password"
                             className="w-full rounded-xl border-none bg-surface-container-high py-3.5 pr-12 pl-4 text-on-surface transition-all placeholder:text-outline focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:outline-none"
                             placeholder="••••••••"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             {...register("password", { required: "La contraseña es requerida" })}
                         />
                         {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
-                        <button
-                            type="button"
-                            className="absolute top-1/2 right-4 -translate-y-1/2 text-outline hover:text-on-surface"
-                            aria-label="Mostrar contraseña"
-                        >
-                            <span className="material-symbols-outlined text-lg">
-                                visibility
-                            </span>
-                        </button>
+                        <PasswordInput
+                            showPassword={showPassword}
+                            setShowPassword={setShowPassword}
+                        />
                     </div>
                 </div>
                 <div className="flex items-center gap-3 py-2">
