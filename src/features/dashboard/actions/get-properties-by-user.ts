@@ -5,10 +5,11 @@ import { propertyImageTable, propertyTable, propertyTypeTable } from "@/src/db/s
 import { auth } from "@/src/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { PropertyListRow } from "../../properties/types/properie.type";
 
 
 
-export const getPropertiesByUser = async () => {
+export const getPropertiesByUser = async (): Promise<PropertyListRow[] | { success: false, errors: string[] }> => {
 
     const session = await auth.api.getSession({
         headers: await headers(),
