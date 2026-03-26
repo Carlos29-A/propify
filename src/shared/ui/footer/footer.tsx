@@ -7,7 +7,7 @@ export const Footer = () => {
                         Propify
                     </span>
                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                        © 2024 Propify. Editorial Real Estate Excellence.
+                        © {new Date().getFullYear()} Propify. Editorial Real Estate Excellence.
                     </p>
                 </div>
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
@@ -15,37 +15,37 @@ export const Footer = () => {
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Privacy Policy
+                        Política de privacidad
                     </a>
                     <a
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Terms of Service
+                        Términos de servicio
                     </a>
                     <a
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Cookie Settings
+                        Configuración de cookies
                     </a>
                     <a
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Contact Support
+                        Contactar soporte
                     </a>
                     <a
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Careers
+                        Carreras
                     </a>
                     <a
                         className="text-slate-500 transition-colors duration-150 hover:text-blue-500 hover:opacity-80 dark:text-slate-400"
                         href="#"
                     >
-                        Press Kit
+                        Kit de prensa
                     </a>
                 </div>
             </div>

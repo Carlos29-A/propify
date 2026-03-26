@@ -166,4 +166,10 @@ export class PropertyService {
             throw new Error("Error al eliminar la propiedad");
         }
     }
+    static async getProperties() {
+        const properties = await db.select().from(propertyTable)
+            .innerJoin(propertyTypeTable, eq(propertyTable.typeId, propertyTypeTable.id))
+            .innerJoin(propertyImageTable, eq(propertyTable.id, propertyImageTable.propertyId));
+        return properties;
+    }
 }

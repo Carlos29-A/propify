@@ -1,16 +1,26 @@
-import { Sidebar, TopMenu } from "@/src/features/dashboard/components";
-import { Footer } from "@/src/shared/ui";
+import { Sidebar } from "@/src/features/dashboard/components";
+import { auth } from "@/src/lib/auth";
+import { Footer, TopMenu } from "@/src/shared/ui";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { ToastContainer } from "react-toastify";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
+    // Obtener el usuario autenticado
+    const data = await auth.api.getSession({
+        headers: await headers(),
+    });
+    if (!data?.user) {
+        redirect("/")
+    }
 
     return (
         <>
             <div className="bg-white text-gray-900 min-h-screen">
 
                 {/* Top Navigation */}
-                <TopMenu />
+                <TopMenu user={data.user} />
 
                 {/* Sidebar + Main layout */}
                 <div className="flex pt-16 min-h-screen">
