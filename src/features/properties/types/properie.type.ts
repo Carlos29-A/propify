@@ -34,6 +34,7 @@ export interface Property {
     userId: string;
 }
 
+
 export interface PropertyType {
     id: number;
     name: string;

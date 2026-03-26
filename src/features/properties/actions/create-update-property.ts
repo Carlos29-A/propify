@@ -1,14 +1,14 @@
 "use server";
 
 import { propertySchema } from "../schemas/propertie.schema";
+import type { PropertyFormData } from "../types/properie.type";
 import { auth } from "@/src/lib/auth";
 import { headers } from "next/headers";
+import { refresh } from "next/cache";
 import { PropertyService } from "../services/propertice.service";
 
-
-
 export const createUpdateProperty = async (
-    formData: FormData | Record<string, unknown>,
+    formData: FormData | Record<string, unknown> | PropertyFormData,
     /** Cuando envías un objeto plano desde el cliente, pasa los `File` aquí (no van en el JSON). */
     imageFiles?: File[],
 ) => {
@@ -49,14 +49,20 @@ export const createUpdateProperty = async (
         if (!property) {
             return {
                 success: false,
-                message: "No se pudo crear la propiedad",
-                errors: ["No se pudo crear la propiedad"],
+                message: "No se pudo guardar la propiedad",
+                errors: ["No se pudo guardar la propiedad"],
             }
         }
 
+        const isUpdate = Boolean(parsedData.data.id);
+        // Sincroniza datos de Server Components en el cliente (caché RSC del router)
+        refresh();
+
         return {
             success: true,
-            message: "Propiedad creada correctamente",
+            message: isUpdate
+                ? "Propiedad actualizada correctamente"
+                : "Propiedad creada correctamente",
             property,
         }
     } catch (error) {

@@ -1,4 +1,10 @@
+"use client";
+
+
+import { formatPrice } from "@/src/lib/format";
 import type { PropertyListRow } from "../../types/properie.type";
+import { FaBath, FaBed, FaEdit, FaEye, FaRuler, FaTrash } from "react-icons/fa";
+import Link from "next/link";
 
 interface PropertieCardProps {
     row: PropertyListRow;
@@ -30,38 +36,45 @@ export const PropertieCard = ({ row }: PropertieCardProps) => {
                     </div>
                     <div className="text-right">
                         <p className="text-2xl font-black text-blue-600">
-                            ${property.price}
+                            {formatPrice(Number(property.price))}
                         </p>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                    <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full">
-                        {property.rooms} Hab.
+                    <span className="bg-blue-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <FaBed className="inline-block mr-1 shrink-0 text-slate-500" size={20} />
+                        {property.rooms} Habitaciones
                     </span>
-                    <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    <span className="bg-blue-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <FaBath className="inline-block mr-1 shrink-0 text-slate-500" size={16} />
                         {property.bathrooms} Baños
                     </span>
-                    <span className="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full">
-                        {property.area} m²
+                    <span className="bg-blue-100 text-gray-600 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <FaRuler className="inline-block mr-1 shrink-0 text-slate-500" size={20} />
+                        {property.area} Metros cuadrados
                     </span>
                 </div>
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
                     <button
                         type="button"
-                        className="text-sm font-bold text-gray-500 hover:text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100"
+                        className="text-sm font-bold text-gray-500 hover:text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 cursor-pointer transition-colors duration-300"
                     >
+                        <FaEye className="inline-block mr-1 shrink-0" size={20} />
                         Ver
                     </button>
-                    <button
-                        type="button"
-                        className="text-sm font-bold text-gray-500 hover:text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100"
+                    <Link
+                        href={`/dashboard/properties/${property.id}`}
+                        className="text-sm font-bold text-gray-500 hover:text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-100 flex items-center gap-2 cursor-pointer transition-colors duration-300"
+
                     >
+                        <FaEdit className="inline-block mr-1 shrink-0" size={20} />
                         Editar
-                    </button>
+                    </Link>
                     <button
                         type="button"
-                        className="text-sm font-bold text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg"
+                        className="text-sm font-bold text-red-500 hover:text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer transition-colors duration-300"
                     >
+                        <FaTrash className="inline-block mr-1 shrink-0" size={20} />
                         Eliminar
                     </button>
                 </div>

@@ -1,7 +1,7 @@
 import db from "@/src";
-import { Property, PropertyFormData } from "../types/properie.type";
-import { eq } from "drizzle-orm";
-import { propertyImageTable, propertyTable } from "@/src/db/schema";
+import { Property, PropertyFormData, PropertyListRow } from "../types/properie.type";
+import { and, eq } from "drizzle-orm";
+import { propertyImageTable, propertyTable, propertyTypeTable } from "@/src/db/schema";
 import { randomUUID } from "crypto";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
@@ -32,10 +32,14 @@ export class PropertyService {
                             typeId: rest.typeId,
                             userId,
                         })
-                        .where(eq(propertyTable.id, id))
+                        .where(
+                            and(eq(propertyTable.id, id), eq(propertyTable.userId, userId)),
+                        )
                         .returning();
                     if (!updatedProperty) {
-                        throw new Error("No se encontró la propiedad para actualizar");
+                        throw new Error(
+                            "No se encontró la propiedad o no tienes permiso para editarla",
+                        );
                     }
                     property = updatedProperty;
                 } else {
@@ -79,8 +83,11 @@ export class PropertyService {
             });
 
 
-            revalidatePath(`/dashboard/properties`);
-            revalidatePath(`/properties/${result.property.id}`);
+            // `layout` invalida listado y todas las rutas bajo /dashboard/properties (incl. [slug])
+            revalidatePath("/dashboard/properties", "layout");
+            // Ruta dinámica: sin `type` Next 16 no revalida por defecto
+            revalidatePath(`/dashboard/properties/${result.property.id}`, "page");
+            revalidatePath(`/properties/${result.property.id}`, "page");
 
             return result.property;
 
@@ -116,5 +123,15 @@ export class PropertyService {
             console.error(error);
             throw new Error("Error al subir las imágenes");
         }
+    }
+    static async getPropertyById(id: string): Promise<PropertyListRow | null> {
+        const rows: PropertyListRow[] = await db
+            .select()
+            .from(propertyTable)
+            .where(eq(propertyTable.id, id))
+            .innerJoin(propertyTypeTable, eq(propertyTable.typeId, propertyTypeTable.id))
+            .innerJoin(propertyImageTable, eq(propertyTable.id, propertyImageTable.propertyId));
+        const first = rows[0];
+        return first ?? null;
     }
 }
