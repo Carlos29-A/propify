@@ -5,12 +5,20 @@ import { formatPrice } from "@/src/lib/format";
 import type { PropertyListRow } from "../../types/properie.type";
 import { FaBath, FaBed, FaEdit, FaEye, FaRuler, FaTrash } from "react-icons/fa";
 import Link from "next/link";
+import { useState } from "react";
+import { Modal } from "@/src/shared/ui";
+import { deletePropertyById } from "../../actions/delete-property-by-id";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface PropertieCardProps {
     row: PropertyListRow;
 }
 
 export const PropertieCard = ({ row }: PropertieCardProps) => {
+    const router = useRouter();
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const { property, property_type, property_image } = row;
 
     return (
@@ -73,11 +81,31 @@ export const PropertieCard = ({ row }: PropertieCardProps) => {
                     <button
                         type="button"
                         className="text-sm font-bold text-red-500 hover:text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer transition-colors duration-300"
+                        onClick={() => setShowDeleteModal(true)}
                     >
                         <FaTrash className="inline-block mr-1 shrink-0" size={20} />
                         Eliminar
                     </button>
                 </div>
+                {
+                    showDeleteModal && (
+                        <Modal
+                            title="Eliminar Propiedad"
+                            description="¿Estás seguro de querer eliminar esta propiedad?"
+                            onClose={() => setShowDeleteModal(false)}
+                            onConfirm={async () => {
+                                const result = await deletePropertyById(property.id);
+                                if (result.success) {
+                                    setShowDeleteModal(false);
+                                    toast.success(result.message);
+                                    router.refresh();
+                                } else {
+                                    toast.error(result.errors?.[0] ?? "Error al eliminar la propiedad");
+                                }
+                            }}
+                        />
+                    )
+                }
             </div>
         </div>
     );

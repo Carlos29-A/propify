@@ -10,5 +10,7 @@ export const propertyImageTable = pgTable("property_image", {
 
 
     // Relaciones con la tabla de propiedades
-    propertyId: uuid("property_id").references(() => propertyTable.id),
+    propertyId: uuid("property_id").references(() => propertyTable.id, {
+        onDelete: "cascade",
+    }),
 });

@@ -5,7 +5,7 @@ import type { PropertyFormData } from "../types/properie.type";
 import { auth } from "@/src/lib/auth";
 import { headers } from "next/headers";
 import { refresh } from "next/cache";
-import { PropertyService } from "../services/propertice.service";
+import { PropertyService } from "../services/property.service";
 
 export const createUpdateProperty = async (
     formData: FormData | Record<string, unknown> | PropertyFormData,

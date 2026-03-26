@@ -134,4 +134,36 @@ export class PropertyService {
         const first = rows[0];
         return first ?? null;
     }
+    static async deletePropertyById(id: string, userId: string) {
+        try {
+            const result = await db.transaction(async (tx) => {
+                // Primero borra hijas para no violar FK.
+                await tx
+                    .delete(propertyImageTable)
+                    .where(eq(propertyImageTable.propertyId, id));
+
+                const [deletedProperty] = await tx
+                    .delete(propertyTable)
+                    .where(and(eq(propertyTable.id, id), eq(propertyTable.userId, userId)))
+                    .returning();
+
+                if (!deletedProperty) {
+                    throw new Error(
+                        "No se encontró la propiedad o no tienes permiso para eliminarla",
+                    );
+                }
+
+                return deletedProperty;
+            });
+
+            // El action ya revalida, pero esto ayuda si se llama directo al service.
+            revalidatePath("/dashboard/properties", "layout");
+            revalidatePath(`/dashboard/properties/${id}`, "page");
+
+            return result;
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error al eliminar la propiedad");
+        }
+    }
 }

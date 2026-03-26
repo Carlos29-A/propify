@@ -1,5 +1,5 @@
 import type { PropertyListRow } from "../types/properie.type";
-import { PropertyService } from "../services/propertice.service";
+import { PropertyService } from "../services/property.service";
 
 export type GetPropertyByIdResult =
     | { ok: true; data: PropertyListRow }
