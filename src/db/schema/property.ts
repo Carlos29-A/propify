@@ -12,8 +12,7 @@ export const propertyTable = pgTable("property", {
     bathrooms: integer("bathrooms").notNull(),
     area: numeric("area").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
-
-
+    status: varchar("status", { length: 255 }).notNull().default("active").$type<"active" | "sold" | "pending">(),
     // Relaciones con la tabla de tipos de propiedades
     typeId: serial("type_id").references(() => propertyTypeTable.id),
     // Relaciones con la tabla de usuarios

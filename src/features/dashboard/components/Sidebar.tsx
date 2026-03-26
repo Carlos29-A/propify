@@ -11,10 +11,10 @@ export const Sidebar = () => {
 
     // Verificar si la ruta es la misma
     const isHome = pathname === "/dashboard";
-    const isProperties = pathname === "/dashboard/properties";
-    const isFavorites = pathname === "/dashboard/favorites";
-    const isMessages = pathname === "/dashboard/messages";
-    const isProfile = pathname === "/dashboard/profile";
+    const isProperties = pathname.startsWith("/dashboard/properties");
+    const isFavorites = pathname.startsWith("/dashboard/favorites");
+    const isMessages = pathname.startsWith("/dashboard/messages");
+    const isProfile = pathname.startsWith("/dashboard/profile");
 
     return (
         <>

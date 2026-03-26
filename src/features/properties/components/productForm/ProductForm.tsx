@@ -145,7 +145,7 @@ function ProductFormFields({ defaults, propertyTypes, existingImageUrl }: Produc
                         </label>
                         <input
                             className="w-full bg-surface-container-high border-none rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all placeholder:text-outline"
-                            placeholder="e.g. Modern Penthouse with City View"
+                            placeholder="e.g. Casa en la playa con vista al mar"
                             type="text"
                             {...register("title", { required: "El título es requerido" })}
                         />
@@ -329,19 +329,22 @@ function ProductFormFields({ defaults, propertyTypes, existingImageUrl }: Produc
                 />
             </section>
 
-            <span className="text-sm font-semibold text-on-surface-variant block">
-                Imágenes de la Propiedad
-            </span>
+
             {existingImageUrl ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                        <img
-                            src={existingImageUrl}
-                            alt="Imagen de la propiedad"
-                            className="w-full h-full object-cover"
-                        />
+                <>
+                    <span className="text-sm font-semibold text-on-surface-variant block">
+                        Imágenes de la Propiedad
+                    </span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                            <img
+                                src={existingImageUrl}
+                                alt="Imagen de la propiedad"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                     </div>
-                </div>
+                </>
             ) : null}
 
             <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">

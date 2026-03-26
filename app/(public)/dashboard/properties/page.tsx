@@ -2,12 +2,16 @@
 import { getPropertiesByUser } from "@/src/features/dashboard/actions/get-properties-by-user";
 import { Button } from "@/src/features/dashboard/components";
 import { PropertieGrid } from "@/src/features/properties/components";
-import { Title } from "@/src/shared/ui";
+import { Stats, Title } from "@/src/shared/ui";
+import { FaHouse } from "react-icons/fa6";
 
 export default async function PropertiesPage() {
     const result = await getPropertiesByUser();
+    console.log(result);
+    const { data: activeProperties } = await getPropertiesByUser("active");
+    const { data: soldProperties } = await getPropertiesByUser("sold");
 
-    if (!Array.isArray(result)) {
+    if (!result.success) {
         return (
             <>
                 <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 ">
@@ -34,30 +38,12 @@ export default async function PropertiesPage() {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col justify-between border-l-4 border-blue-600">
-                    <span className="text-sm font-semibold text-gray-400">Total Portfolio</span>
-                    <div className="mt-4">
-                        <span className="text-3xl font-black">12</span>
-                        <span className="text-sm text-blue-600 font-bold ml-2">+2 this month</span>
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col justify-between border-l-4 border-orange-400">
-                    <span className="text-sm font-semibold text-gray-400">Active Views</span>
-                    <div className="mt-4">
-                        <span className="text-3xl font-black">1,482</span>
-                        <span className="text-sm text-orange-500 font-bold ml-2">85% engagement</span>
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col justify-between border-l-4 border-red-500">
-                    <span className="text-sm font-semibold text-gray-400">Pending Offers</span>
-                    <div className="mt-4">
-                        <span className="text-3xl font-black">04</span>
-                        <span className="text-sm text-red-500 font-bold ml-2">Awaiting review</span>
-                    </div>
-                </div>
+                <Stats title="Propiedades activas" value={activeProperties.length} icon={<FaHouse className="text-orange-400" size={32} />} className="border-l-4 border-orange-400" />
+                <Stats title="Propiedades vendedidas" value={soldProperties.length} icon={<FaHouse className="text-red-500" size={32} />} className="border-l-4 border-red-500" />
+                <Stats title="Total Propiedades Publicadas" value={result.data.length} icon={<FaHouse className="text-blue-600" size={32} />} className="border-l-4 border-blue-600" />
             </div>
 
-            <PropertieGrid properties={result} />
+            <PropertieGrid properties={result.data} />
         </>
     )
 }
